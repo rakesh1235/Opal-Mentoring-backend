@@ -70,9 +70,5 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post('/test',(req, res)=>{
-  console.log("it should not print")
-  res.json('pass')
-})
 
 module.exports = router;
