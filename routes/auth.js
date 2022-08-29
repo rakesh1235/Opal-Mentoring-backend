@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
     };
     const authtoken = jwt.sign(data, JWT_SECRET);
     success = true;
-    res.json({ success, authtoken, userName: user.firstName });
+    res.json({ success, authtoken, userName: `${user.firstName} ${user.lastName}` });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");

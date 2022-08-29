@@ -1,4 +1,4 @@
-const mongoConnect = require('./db');
+const mongoConnect = require('./dbConf/db');
 const express = require('express')
 var cors = require('cors') 
 
