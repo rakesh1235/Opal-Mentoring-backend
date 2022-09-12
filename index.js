@@ -15,6 +15,7 @@ app.use((req, res, next)=>{
 })
 
 app.use('/auth', require('./routes/auth'))
+app.use('/userData', require('./routes/userData'))
 
 
 app.listen(port, () => {
