@@ -23,10 +23,18 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  mentor: {
+    type: String
+  },
   programs:{
     type:Array,
   },
-  
+  role:{
+    type:String
+  },
+  programList:{
+    type:String
+  }
 });
 
 module.exports = mongoose.model('user', UserSchema)

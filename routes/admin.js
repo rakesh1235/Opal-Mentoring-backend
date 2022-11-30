@@ -1,14 +1,21 @@
 const express = require("express");
 const User = require("../models/User");
-const router = express.Router();
+const Programs = require("../models/Programs");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../services/mailIntegrationService");
-var jwt = require("jsonwebtoken");
+const router = express.Router();
 
-const JWT_SECRET = "OpalMentoringApplicationBuiltByRakesh";
+router.get("/getUsers", async (req, res) => {
+  let user = await User.find({ role: "student" });
+  res.json(user);
+});
 
-// ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
-router.post("/createuser", async (req, res) => {
+router.get("/getPrograms", async (req, res) => {
+  let progrmas = await Programs.find({});
+  res.json(progrmas);
+});
+
+router.post("/createUser", async (req, res) => {
   let subject = "Welcome to Opal Mentoring Application  ✔";
 
   let body = `Hi ${req.body.firstName} ${req.body.lastName},
@@ -34,6 +41,10 @@ router.post("/createuser", async (req, res) => {
       lastName: req.body.lastName,
       password: secPass,
       email: req.body.email,
+      mentor: req.body.mentor,
+      programs: req.body.programs,
+      role: "student",
+      programList: req.body.programList,
     });
 
     // res.json(user)
@@ -48,40 +59,21 @@ router.post("/createuser", async (req, res) => {
   }
 });
 
-// ROUTE 2: Authenticate a User using: POST "/api/auth/login". No login required
-router.post("/login", async (req, res) => {
-  let success = false;
-  const { email, password } = req.body;
-  try {
-    let user = await User.findOne({ email });
-    if (!user) {
-      success = false;
-      return res.json({
-        error: "Please try to login with correct credentials",
-      });
-    }
+router.get("/deleteUser", async (req, res) => {
+  let user = await User.findByIdAndDelete({ _id: req.query._id });
+  res.json(user);
+});
 
-    const passwordCompare = await bcrypt.compare(password, user.password);
-    if (!passwordCompare) {
-      success = false;
-      return res.json({
-        success,
-        error: "Please try to login with correct credentials",
-      });
+router.post("/updateUser", async (req, res) => {
+  let user = await User.findByIdAndUpdate(
+    { _id: req.body.userId },
+    {
+      programs: req.body.programs,
+      mentor: req.body.mentor,
+      programList: req.body.programList,
     }
-
-    const data = {
-      user: {
-        id: user.id,
-      },
-    };
-    const authtoken = jwt.sign(data, JWT_SECRET);
-    success = true;
-    res.json({ success, authtoken, userName: `${user.firstName} ${user.lastName}`, userId:user._id, role:user.role });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Internal Server Error");
-  }
+  );
+  res.json(user);
 });
 
 module.exports = router;
